@@ -11,27 +11,8 @@
       /> -->
 
       <div class="text-center">
-        <!-- <div class="text-body-2 font-weight-light mb-n1">Welcome to</div> -->
-
-        <h1 class="text-h2 font-weight-bold px-4 py-4">Now, Transfer your playlist from Spotify to Apple Music</h1>
-        <v-form ref="form" v-model="valid">
-          <v-text-field
-            label="Paste your spotify playlist url here:)" 
-            variant="solo"
-            v-model="url"
-            :rules="[urlValidator]"
-            hint="https://open.spotify.com/playlist/xyz"
-            append-inner-icon="mdi-content-paste"
-            @click:append-inner="copyFromClipBoard"
-          >
-          </v-text-field>
-          <v-btn @click="submit" :disabled="!valid">Submit</v-btn>
-          <!-- <v-alert type="error">
-            Something went wrong:( 
-            Please try again later!
-          </v-alert> -->
-    </v-form>
-
+        <h1 class="text-h2 font-weight-bold px-4 py-4">Now, <br>Transfer your playlist from One Music App to Other</h1>
+        <v-btn color="primary" variant="outlined" block  @click="onClick" >Try it out!</v-btn>
       </div>
 
       <div class="py-4" />
@@ -40,34 +21,14 @@
   </v-container>
 </template>
 <script setup>
-import { ref } from "vue";
+import { useRouter } from "vue-router"
 
-let url = ref('');
-let valid = ref(false);
-let submitted = ref(false);
 
-const copyFromClipBoard= async ()=>{
-    const txtclip= await navigator.clipboard.readText();
-    console.log(" [ copyFromClipBoard ]: "+ txtclip);
-    if( txtclip != null || undefined){
-      url.value=txtclip;
-    }
-}
+const onClick = () => {
+      console.log("OnCLick! Implementation yet to be done")
 
-const urlValidator = (value) => {
-  const spotifyPlaylistPattern = /^(https?:\/\/)?(open\.spotify\.com\/playlist\/|spotify:playlist:)([a-zA-Z0-9]{22})/;
-  // TODO: use below url in future once you've multiple music services
-  //const urlPattern = /^(https?:\/\/)?([a-z\d-]+\.)+[a-z]{2,}(:\d+)?(\/[^\s]*)?$/i;
-  return spotifyPlaylistPattern.test(value) || 'Please Enter a vaild Spotify Playlist!';
-}
-
-const submit = () => {
-      console.log("Form Submitted! Implementation yet to be done")
-      submitted.value = true;
-      // if (this.$refs.form.validate()) {
-      //   // Handle valid URL submission here
-      //   alert('Valid URL: ' + this.url);
-      // }
+const router = useRouter()
+      router.push("/")
     }
 
 </script>

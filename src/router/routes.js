@@ -5,8 +5,13 @@ export default [
     component: () => import("@/views/HomeView.vue"),
   },
   {
+    path: "/",
+    name: 'Home',
+    component: () => import("@/views/HomeView.vue"),
+  },
+  {
     path: "/NotFound",
     name: "NotFound",
-    component: () => import("@/views/HomeView.vue"),
+    component: () => import("@/views/PageNotFoundView.vue"),
   },
 ]

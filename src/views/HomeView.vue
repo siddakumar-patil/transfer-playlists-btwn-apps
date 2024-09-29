@@ -1,11 +1,12 @@
 <template>
-    <HelloWorld />
+    <GetStarted />
   </template>
 <script setup>
 import { defineAsyncComponent,onMounted } from "vue"
 import axios from "axios"
 
-const HelloWorld = defineAsyncComponent(() => import("@/components/HelloWorld.vue"))
+const PlayListForm = defineAsyncComponent(() => import("@/components/PlayListForm.vue"))
+const GetStarted = defineAsyncComponent(() => import("@/components/GetStarted.vue"))
 
 onMounted(async () => {
     console.log("onMounted!")

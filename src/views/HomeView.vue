@@ -31,12 +31,9 @@ onMounted(async () => {
 
 // TODO: move below to Stores
 function generateAccessToken() {
-    // Replace with your own Client ID and Client Secret
-    // const clientId = 'your_client_id';
-    // const clientSecret = 'your_client_secret';
-
-    const clientId = import.meta.env.VITE_APP_CLIENT_ID
-    const clientSecret = import.meta.env.VITE_APP_CLIENT_SECRET
+    // Fetch Client ID and Secrets from .env file
+    const clientId = import.meta.env.VITE_APP_SPOTIFY_CLIENT_ID
+    const clientSecret = import.meta.env.VITE_APP_SPOTIFY_CLIENT_SECRET
 
     // Encode client ID and secret
     const authString = `${clientId}:${clientSecret}`;

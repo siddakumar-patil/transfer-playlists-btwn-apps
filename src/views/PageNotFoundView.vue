@@ -20,16 +20,15 @@
   
       </v-responsive>
     </v-container>
-  </template>
-  <script setup>
-  import { useRouter } from "vue-router"
-  
-  
-  const onClick = () => {
-        console.log("OnCLick! Implementation yet to be done")
-  
-  const router = useRouter()
-        router.push("/")
-      }
-  
-  </script>
+</template>
+
+<script setup>
+import { useRouter } from "vue-router"
+
+const router = useRouter()
+
+const onClick = () => {
+    router.push({ path: "/" })
+}
+
+</script>

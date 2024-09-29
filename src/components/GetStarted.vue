@@ -23,13 +23,14 @@
 <script setup>
 import { useRouter } from "vue-router"
 
+const router = useRouter()
 
 const onClick = () => {
-      console.log("OnCLick! Implementation yet to be done")
+  console.log("OnCLick! Implementation yet to be done")
 
-const router = useRouter()
-      router.push("/")
-    }
+  console.log("OnCLick:"+useRouter())
+  router.push({ path: "/NotFound" })
+}
 
 </script>
 

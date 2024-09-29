@@ -26,10 +26,7 @@ import { useRouter } from "vue-router"
 const router = useRouter()
 
 const onClick = () => {
-  console.log("OnCLick! Implementation yet to be done")
-
-  console.log("OnCLick:"+useRouter())
-  router.push({ path: "/NotFound" })
+  router.push({ path: "/playlistsrc" })
 }
 
 </script>

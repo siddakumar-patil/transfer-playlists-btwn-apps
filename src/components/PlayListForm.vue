@@ -11,19 +11,19 @@
       /> -->
 
       <div class="text-center">
-        <h1 class="text-h2 font-weight-bold px-4 py-4">Now, Transfer your playlist from Spotify to Apple Music</h1>
+        <h1 class="text-h2 font-weight-bold px-4 py-4">Paste your playlist from {{ serviceProviderName }} below </h1>
         <v-form ref="form" v-model="valid">
           <v-text-field
-            label="Paste your spotify playlist url here:)" 
+            label="Paste your spotify playlist url here:)"
             variant="solo"
             v-model="url"
             :rules="[urlValidator]"
-            hint="https://open.spotify.com/playlist/xyz"
+            :hint="hintUrl"
             append-inner-icon="mdi-content-paste"
             @click:append-inner="copyFromClipBoard"
           >
           </v-text-field>
-          <v-btn @click="submit" :disabled="!valid" color="primary">Fetch PlayList</v-btn>
+          <v-btn @click="submit" :disabled="!valid" color="primary" rounded>Fetch PlayList</v-btn>
           <!-- <v-alert type="error">
             Something went wrong:( 
             Please try again later!
@@ -39,6 +39,23 @@
 </template>
 <script setup>
 import { ref } from "vue";
+
+const props = defineProps({
+  hintUrl:{
+    type: String,
+    required: true,
+    default:"https://open.spotify.com/playlist/xyz"
+  },
+  serviceProviderName: {
+    type: String,
+    required: true
+  },
+  urlPattern: {
+    type: RegExp,
+    required: true,
+    default: /^(https?:\/\/)?([a-z\d-]+\.)+[a-z]{2,}(:\d+)?(\/[^\s]*)?$/i,
+  },
+})
 
 let url = ref('');
 let valid = ref(false);
@@ -59,10 +76,11 @@ const copyFromClipBoard = async () => {
 }
 
 const urlValidator = (value) => {
-  const spotifyPlaylistPattern = /^(https?:\/\/)?(open\.spotify\.com\/playlist\/|spotify:playlist:)([a-zA-Z0-9]{22})/;
+  // const spotifyPlaylistPattern = /^(https?:\/\/)?(open\.spotify\.com\/playlist\/|spotify:playlist:)([a-zA-Z0-9]{22})/;
+
   // TODO: use below url in future once you've multiple music services
   //const urlPattern = /^(https?:\/\/)?([a-z\d-]+\.)+[a-z]{2,}(:\d+)?(\/[^\s]*)?$/i;
-  return spotifyPlaylistPattern.test(value) || 'Please Enter a vaild Spotify Playlist!';
+  return props.urlPattern.test(value) || 'Please Enter a vaild Playlist Url!';
 }
 
 const submit = () => {

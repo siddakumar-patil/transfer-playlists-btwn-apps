@@ -1,13 +1,15 @@
 <template>
-    <MusicServicesList  />
-</template>
-
+    <GetStarted />
+  </template>
 <script setup>
 import { defineAsyncComponent,onMounted } from "vue"
 import axios from "axios"
-import MusicServicesList from "@/components/MusicServicesList.vue";
+
+const PlayListForm = defineAsyncComponent(() => import("@/components/PlayListForm.vue"))
+const GetStarted = defineAsyncComponent(() => import("@/components/GetStarted.vue"))
+
 onMounted(async () => {
-    console.log("onMounted PlaLust!")
+    console.log("onMounted!")
     // const accessToken = await getAccessToken();
     // console.log("onMounted: " + accessToken)
     // if (accessToken) {

@@ -105,47 +105,8 @@ const trackImage= (images)=>{
     }
 }
 
-
-
-onMounted(()=>{
-  console.log("onMounted: "+JSON.stringify(userStore.$state))
-})
-
-
 const onClick = () => {
-    
+  router.push({ path: "/playlistdest" })
 }
-
-
-// Function to create playlist
-async function createPrivatePlaylist(accessToken, title, description) {
-  const response = await fetch('https://www.googleapis.com/youtube/v3/playlists?part=snippet,status', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      snippet: {
-        title: title,
-        description: description,
-        tags: ['private'],
-        defaultLanguage: 'en'
-      },
-      status: {
-        privacyStatus: 'private' // Set to 'private'
-      }
-    })
-  });
-
-  if (!response.ok) {
-    throw new Error(`Error creating playlist: ${response.statusText}`);
-  }
-
-  const data = await response.json();
-  return data; // Return the created playlist details
-}
-
-
 
 </script>

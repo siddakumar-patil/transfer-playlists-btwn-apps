@@ -12,117 +12,20 @@
       <div class="py-4" />
 
       <v-row>
-        <v-col cols="6" v-for="appName in applist" :key="appName.name">
+        <v-col cols="6" v-for="app in applist" :key="app.name">
             <v-card
-                append-icon="mdi-open-in-new"
+                :append-icon="app.appendIcon"
                 class="py-4"
                 color="surface-variant"
-                prepend-icon="mdi-spotify"
+                :prepend-icon="app.prependIcon"
                 rounded="lg"
                 variant="outlined"
+                link
+                @click="onClick(app.redirectRoute)"
                 >
                 <template #title>
-                    <h2 class="text-h5 font-weight-bold">{{ appName.name }}</h2>
+                    <h2 class="text-h5 font-weight-bold">{{ app.name }}</h2>
                 </template>
-            </v-card>
-        </v-col>
-
-        <v-col cols="6">
-            <v-card
-                append-icon="mdi-open-in-new"
-                class="py-4"
-                color="surface-variant"
-                prepend-icon="mdi-spotify"
-                rounded="lg"
-                variant="outlined"
-                >
-                <!-- <template #image>
-                    <v-img position="top right" src="https://newsroom.spotify.com/wp-content/themes/ftr/assets/images/spotify-logo.png" />
-                </template> -->
-
-                <template #title>
-                    <h2 class="text-h5 font-weight-bold">Spotify</h2>
-                </template>
-
-                <!-- <template #subtitle>
-                    <div class="text-subtitle-1">
-                    Replace this page by removing <v-kbd>{{ `<HelloWorld />` }}</v-kbd> in <v-kbd>pages/index.vue</v-kbd>.
-                    </div>
-                </template> -->
-
-                <!-- <v-overlay
-                    opacity=".12"
-                    scrim="primary"
-                    contained
-                    model-value
-                    persistent
-                /> -->
-            </v-card>
-        </v-col>
-
-        <v-col cols="6">
-            <v-card
-                append-icon="mdi-open-in-new"
-                class="py-4"
-                color="surface-variant"
-                prepend-icon="mdi-apple"
-                rounded="lg"
-                variant="outlined"
-                >
-                <!-- <template #image>
-                    <v-img position="top right" src="https://newsroom.spotify.com/wp-content/themes/ftr/assets/images/spotify-logo.png" />
-                </template> -->
-
-                <template #title>
-                    <h2 class="text-h5 font-weight-bold">Apple Music</h2>
-                </template>
-
-                <!-- <template #subtitle>
-                    <div class="text-subtitle-1">
-                    Replace this page by removing <v-kbd>{{ `<HelloWorld />` }}</v-kbd> in <v-kbd>pages/index.vue</v-kbd>.
-                    </div>
-                </template> -->
-
-                <!-- <v-overlay
-                    opacity=".12"
-                    scrim="primary"
-                    contained
-                    model-value
-                    persistent
-                /> -->
-            </v-card>
-        </v-col>
-
-        <v-col cols="6">
-            <v-card
-                append-icon="mdi-open-in-new"
-                class="py-4"
-                color="surface-variant"
-                prepend-icon="mdi-youtube"
-                rounded="lg"
-                variant="outlined"
-                >
-                <!-- <template #image>
-                    <v-img position="top right" src="https://newsroom.spotify.com/wp-content/themes/ftr/assets/images/spotify-logo.png" />
-                </template> -->
-
-                <template #title>
-                    <h2 class="text-h5 font-weight-bold">Youtube Music</h2>
-                </template>
-
-                <!-- <template #subtitle>
-                    <div class="text-subtitle-1">
-                    Replace this page by removing <v-kbd>{{ `<HelloWorld />` }}</v-kbd> in <v-kbd>pages/index.vue</v-kbd>.
-                    </div>
-                </template> -->
-
-                <!-- <v-overlay
-                    opacity=".12"
-                    scrim="primary"
-                    contained
-                    model-value
-                    persistent
-                /> -->
             </v-card>
         </v-col>
 
@@ -145,119 +48,49 @@
   </v-container>
   </template>
 <script setup>
-import { ref,defineAsyncComponent, onMounted } from "vue"
-import axios from "axios"
+import { ref } from "vue"
 
-const PlayListForm = defineAsyncComponent(() => import("@/components/PlayListForm.vue"))
-const GetStarted = defineAsyncComponent(() => import("@/components/GetStarted.vue"))
+import { useRouter } from "vue-router"
 
 const props = defineProps({
     appsList: {
         default: [],
         // required: true,
+    },
+    redirectRoute: {
+        type: String,
+        required: true,
     }
 })
 
 // TODO: remove below hardcoded list
-const applist=ref([
+const applist = ref([
     {
-        name:"Spotify",
+        name: "Spotify",
         prependIcon: "mdi-spotify",
-        appendIcon:"mdi-open-in-new"
+        appendIcon: "mdi-open-in-new",
+        redirectRoute: "/spotifysrc"
     },
     {
-        name:"Apple Music",
+        name: "Apple Music",
         prependIcon: "mdi-apple",
-        appendIcon:"mdi-open-in-new"
+        appendIcon: "mdi-open-in-new",
+        redirectRoute: "/spotifysrc" // TODO: Change
     },
     {
-        name:"Youtube Music",
+        name: "Youtube Music",
         prependIcon: "mdi-youtube",
-        appendIcon:"mdi-open-in-new"
+        appendIcon: "mdi-open-in-new",
+        redirectRoute: "/spotifysrc"// TODO: Change
     },
 ])
 
-onMounted(async () => {
-    console.log("onMounted!")
-    // const accessToken = await getAccessToken();
-    // console.log("onMounted: " + accessToken)
-    // if (accessToken) {
-    //     const playlistId = '37i9dQZF1DWVDvBpGQbzXj?si=Ow6RMWvlTkacquCG9MzgFQ&pi=a-sPOBRPiAS2yz'; // TODO: Replace with your playlist ID
-    //     const tracks = await fetchPlaylistTracks(playlistId, accessToken);
 
-    //     console.log("onMounted!" + tracks)
+const router = useRouter()
 
-    //     if (tracks) {
-
-    //         tracks.forEach(track => {
-    //             const trackName = track.track.name;
-    //             const artistName = track.track.artists[0].name;
-    //             console.log(`Track: ${trackName}, Artist: ${artistName}`);
-    //         });
-    //     }
-    // }
-})
-
-// TODO: move below to Stores
-function generateAccessToken() {
-    // Fetch Client ID and Secrets from .env file
-    const clientId = import.meta.env.VITE_APP_SPOTIFY_CLIENT_ID
-    const clientSecret = import.meta.env.VITE_APP_SPOTIFY_CLIENT_SECRET
-
-    // Encode client ID and secret
-    const authString = `${clientId}:${clientSecret}`;
-    const encodedAuth = Buffer.from(authString).toString('base64');
-
-    const tokenUrl = 'https://accounts.spotify.com/api/token';
-
+const onClick = (redirectRoute) => {
+    if (redirectRoute) router.push({ path: redirectRoute })
 }
-
-const getAccessToken = async () => {
-
-    const clientId = import.meta.env.VITE_APP_CLIENT_ID
-    const clientSecret = import.meta.env.VITE_APP_CLIENT_SECRET
-
-    // Encode client ID and secret
-    const authString = btoa(`${clientId}:${clientSecret}`);
-    // const encodedAuth = Buffer.from(authString).toString('base64');
-
-    const tokenUrl = 'https://accounts.spotify.com/api/token';
-
-    try {
-        const response = await axios.post(tokenUrl, 'grant_type=client_credentials', {
-            headers: {
-                'Authorization': `Basic ${authString}`,
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-        });
-        return response.data.access_token;
-    } catch (error) {
-        console.error('Error fetching access token:', error.response.data);
-    }
-};
-
-// Fetch tracks from a playlist
-const fetchPlaylistTracks = async (playlistId, accessToken) => {
-
-    console.log(" [ fetchPlaylistTracks ]:  Fetching PlaylistTracks for: " + playlistId)
-
-    const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
-
-    try {
-        const response = await axios.get(playlistUrl, {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-            },
-        });
-
-        console.log(" [ fetchPlaylistTracks ]:  Fetching PlaylistTracks for: " + JSON.stringify(response.data))
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching playlist tracks:', error.response.data);
-    }
-};
-
-
 </script>
 
 
@@ -358,3 +191,104 @@ const fetchPlaylistTracks = async (playlistId, accessToken) => {
     </v-card>
 </v-col> -->
 
+
+<!-- 
+
+<v-col cols="6">
+    <v-card
+        append-icon="mdi-open-in-new"
+        class="py-4"
+        color="surface-variant"
+        prepend-icon="mdi-spotify"
+        rounded="lg"
+        variant="outlined"
+        >
+        <template #image>
+            <v-img position="top right" src="https://newsroom.spotify.com/wp-content/themes/ftr/assets/images/spotify-logo.png" />
+        </template> 
+
+        <template #title>
+            <h2 class="text-h5 font-weight-bold">Spotify</h2>
+        </template>
+
+        <template #subtitle>
+            <div class="text-subtitle-1">
+                Keep your Playlist Url ready!
+            </div>
+        </template>
+
+        <v-overlay
+            opacity=".12"
+            scrim="primary"
+            contained
+            model-value
+            persistent
+        /> 
+    </v-card>
+</v-col>
+
+<v-col cols="6">
+    <v-card
+        append-icon="mdi-open-in-new"
+        class="py-4"
+        color="surface-variant"
+        prepend-icon="mdi-apple"
+        rounded="lg"
+        variant="outlined"
+        >
+        <template #image>
+            <v-img position="top right" src="https://newsroom.spotify.com/wp-content/themes/ftr/assets/images/spotify-logo.png" />
+        </template>
+
+        <template #title>
+            <h2 class="text-h5 font-weight-bold">Apple Music</h2>
+        </template>
+
+        <template #subtitle>
+            <div class="text-subtitle-1">
+            Replace this page by removing <v-kbd>{{ `<HelloWorld />` }}</v-kbd> in <v-kbd>pages/index.vue</v-kbd>.
+            </div>
+        </template>
+
+        <v-overlay
+            opacity=".12"
+            scrim="primary"
+            contained
+            model-value
+            persistent
+        />
+    </v-card>
+</v-col>
+
+<v-col cols="6">
+    <v-card
+        append-icon="mdi-open-in-new"
+        class="py-4"
+        color="surface-variant"
+        prepend-icon="mdi-youtube"
+        rounded="lg"
+        variant="outlined"
+        >
+        <template #image>
+            <v-img position="top right" src="https://newsroom.spotify.com/wp-content/themes/ftr/assets/images/spotify-logo.png" />
+        </template>
+
+        <template #title>
+            <h2 class="text-h5 font-weight-bold">Youtube Music</h2>
+        </template>
+
+        <template #subtitle>
+            <div class="text-subtitle-1">
+            Replace this page by removing <v-kbd>{{ `<HelloWorld />` }}</v-kbd> in <v-kbd>pages/index.vue</v-kbd>.
+            </div>
+        </template>
+
+        <v-overlay
+            opacity=".12"
+            scrim="primary"
+            contained
+            model-value
+            persistent
+        /> 
+    </v-card>
+</v-col> -->

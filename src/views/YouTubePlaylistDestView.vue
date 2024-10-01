@@ -23,7 +23,7 @@
           </v-card-title>
 
           <v-card-sub-title class="font-weight-light text-h8" >
-           {{ playlist.tracks?.total }} Songs
+           {{ playlist.tracks?.total }} Songs by {{ playlist?.owner?.display_name }} 
           </v-card-sub-title>
 
           <template v-slot:append>
@@ -47,11 +47,17 @@
                   <v-avatar
                       size="50"
                        rounded="0"
+                       v-if="item.track?.album?.images"
                       >
                       <v-img
                           alt="Album Image"
                           :src="trackImage(item.track?.album?.images)"
                       ></v-img>
+                  </v-avatar>
+                  <v-avatar
+                      size="50"
+                      v-else
+                      ><v-icon>mdi-youtube</v-icon>
                   </v-avatar>
               </template>
 
@@ -113,18 +119,45 @@ const router = useRouter()
 const userStore = useUserStore()
 
 const playlist = computed(() => userStore.getTracks)
+const youtubeAccessToken = computed(() => userStore.getYoutubeAccessToken)
 
-const trackImage= (images)=>{
-  if(images[0]){
-      return images[0]?.url 
+let isLoading = ref(false) // TODO: added loader or progress bar on click
+
+const trackImage = (images) => {
+  if (images[0]) {
+    return images[0]?.url
   }
-  else{
-      return 'https://img.icons8.com/?size=100&id=cyBLpim2K7Ja&format=png&color=000000'
+  else {
+    return 'https://img.icons8.com/?size=100&id=cyBLpim2K7Ja&format=png&color=000000'
   }
 }
 
-const onClick = () => {
-router.push({ path: "/playlistdest" })
+onBeforeMount(() => {
+  // Storing Access token into Pinia Store
+  if (localStorage.getItem("youtubeAccessToken")) userStore.youtube_access_token = localStorage.getItem("youtubeAccessToken")
+
+  // Delete Accesstoken from LocalStorage for security
+  if (userStore.getYoutubeAccessToken !== null) localStorage.removeItem("youtubeAccessToken")
+})
+
+const onClick =async  () => {
+  // TODO: remove below log
+  console.log("Creating Playlist on Youtube:"+playlist.value.name )
+
+  const playlisTitle = playlist.value.name + '-Music Playlist'
+  const playlistDescription = playlist.value.description == '' ? 'Music Playlist by ' + playlist.value?.owner?.display_name : playlist.value.description
+
+  if (playlist.value?.tracks) {
+    
+    const playlistId = await userStore.createYoutubePrivatePlaylist(youtubeAccessToken.value, playlisTitle, playlistDescription)
+    const queries = await userStore.createYoutubeQueriesList(playlist.value?.tracks?.items)
+    const videoIds = await userStore.fetchYoutubeMusicVideoIds(queries)
+  
+    await userStore.addTracksToYoutubePlaylistUsingVideoIds(youtubeAccessToken, playlistId, videoIds)
+  }
+  // else if (playlist.value?.items) {
+  //   const queries = await userStore.createYoutubeQueriesList(playlist.value?.items)
+  // }
 }
 
 </script>

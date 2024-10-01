@@ -78,7 +78,7 @@
         </v-card>
 
         <div class="text-center py-5">
-          <v-btn @click="onClick" size="large" color="primary" rounded>Select Destination Music App</v-btn>
+          <v-btn @click="onClick" size="large" color="green" rounded append-icon="mdi-music">Select Destination Music App</v-btn>
         </div>
 
       </v-responsive>
@@ -86,7 +86,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { computed } from "vue";
 import { useRouter } from "vue-router"
 
 import useUserStore from "@/stores/userStore"
@@ -96,17 +96,17 @@ const userStore = useUserStore()
 
 const playlist = computed(() => userStore.getTracks)
 
-const trackImage= (images)=>{
-    if(images[0]){
-        return images[0]?.url 
+const trackImage = (images) => {
+    if (images[0]) {
+        return images[0]?.url
     }
-    else{
+    else {
         return 'https://img.icons8.com/?size=100&id=cyBLpim2K7Ja&format=png&color=000000'
     }
 }
 
 const onClick = () => {
-  router.push({ path: "/playlistdest" })
+    router.push({ path: "/playlistdest" })
 }
 
 </script>

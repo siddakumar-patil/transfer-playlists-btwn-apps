@@ -47,10 +47,7 @@ import { useRouter } from "vue-router"
 
 import useUserStore from "@/stores/userStore"
 
-
 const router = useRouter()
-
-
 const userStore = useUserStore()
 
 const props = defineProps({
@@ -69,7 +66,6 @@ const props = defineProps({
     default: /^(https?:\/\/)?([a-z\d-]+\.)+[a-z]{2,}(:\d+)?(\/[^\s]*)?$/i,
   },
 })
-
 
 let url = ref('');
 let valid = ref(false);

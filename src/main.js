@@ -4,7 +4,7 @@ import { registerPlugins } from '@/plugins'
 import App from './App.vue'
 
 // Composables
-import { createApp } from 'vue'
+import { createApp,markRaw } from 'vue'
 
 import router from '@/router'
 
@@ -21,6 +21,8 @@ window.addEventListener("message", (event) => {
     return
   }
 
+  console.log(" Eventlistner: "+ JSON.stringify(event.data))
+
   if (event.data.accessToken) {
     // Store the access token securely
     localStorage.setItem("youtubeAccessToken", event.data.accessToken._value)
@@ -28,6 +30,23 @@ window.addEventListener("message", (event) => {
 
     // Optionally, redirect or update the UI
     router.push({ path: "/youtubeplaylistdest" })
+  }
+})
+
+// Event Listner for Login Popups
+window.addEventListener("message", (event) => {
+  if (event.origin !== "http://localhost:5000") {
+    // Check the origin for security
+    return
+  }
+
+  if (event.data.code) {
+    // Store the access token securely
+    localStorage.setItem("spotifyAuthAccessToken", event.data.code)
+    console.log("Access token received:", event)
+
+    // Optionally, redirect or update the UI
+    router.push({ path: "/spotifyplaylistdest" })
   }
 })
   

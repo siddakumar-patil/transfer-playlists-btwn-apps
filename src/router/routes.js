@@ -27,9 +27,19 @@ export default [
     component: () => import("@/views/HandleYoutubeCallbackView.vue"),
   },
   {
+    path: "/spotifycallback",
+    name: 'SpotifyCallback',
+    component: () => import("@/views/HandleSpotifyCallbackView.vue"),
+  },
+  {
     path: "/youtubeplaylistdest",
     name: 'YoutubePlaylistDest',
     component: () => import("@/views/YouTubePlaylistDestView.vue"),
+  },
+  {
+    path: "/spotifyplaylistdest",
+    name: 'SpotifylaylistDest',
+    component: () => import("@/views/SpotifyPlaylistDestView.vue"),
   },
   {
     path: "/spotifysrc",

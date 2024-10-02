@@ -102,12 +102,12 @@
         <div class="py-4" />
   
         <div class="text-center py-5">
-          <v-btn @click="onClick" size="large" color="primary" rounded append-icon="mdi-home">Back to Home</v-btn>
+          <v-btn @click="onClickHome" size="large" color="primary" rounded append-icon="mdi-home">Back to Home</v-btn>
         </div>
   
       </v-responsive>
     </v-container>
-  </template>
+</template>
   
 
 <script setup>
@@ -115,11 +115,12 @@ import { computed } from "vue";
 import { useRouter } from "vue-router"
 
 import useUserStore from "@/stores/userStore"
+import useYoutubeStore from "@/stores/youtubeStore"
 
 const router = useRouter()
-const userStore = useUserStore()
+const youtubeStore = useYoutubeStore()
 
-const playlist = computed(() => userStore.getYoutubeVidoes)
+const playlist = computed(() => youtubeStore.getYoutubeVidoes)
 
 const trackImage = (images) => {
     if (images[0]) {
@@ -132,6 +133,11 @@ const trackImage = (images) => {
 
 const onClick = () => {
     router.push({ path: "/playlistdest" })
+}
+
+
+const onClickHome = () => {
+    router.push({ path: "/" })
 }
 
 </script>

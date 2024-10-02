@@ -57,6 +57,8 @@ import { useRouter } from "vue-router"
 
 import useUserStore from "@/stores/userStore"
 import useAppStore from "@/stores/appStore";
+import useYoutubeStore from "@/stores/youtubeStore";
+import useSpotifyStore from "@/stores/spotifyStore";
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -88,13 +90,13 @@ onMounted(async () => {
     hintUrl.value = "https://open.spotify.com/playlist/xyz"
 
     // Generating AccessToken for Spotify API
-    await useUserStore().generateSpotifyAccessToken()
+    await useUserStore().generateSpotifyUnAuthAccessToken()
   }
   else if (props.serviceProviderName == 'youtube') {
     label.value = "Paste your Youtube playlist url here:)"
     regex.value = /^https?:\/\/(www\.)?youtube\.com\/playlist\?list=([A-Za-z0-9_-]+)/;
     hintUrl.value = "https://www.youtube.com/playlist/xyz"
-    await useUserStore().generateSpotifyAccessToken()
+    await useUserStore().generateSpotifyUnAuthAccessToken()
     useUserStore().setYoutubeAPIkey()
   }
 })
@@ -122,7 +124,7 @@ const submit = async () => {
   if (props.serviceProviderName == 'spotify') {
     console.log("Form Submitted! Implementation yet to be done" + spotifyAccessToken)
     submitted.value = true;
-    res.value = await useAppStore().fetchSpotifyPlaylistTracks(url.value, spotifyAccessToken.value)
+    res.value = await useSpotifyStore().fetchSpotifyPlaylistTracks(url.value, spotifyAccessToken.value)
 
     console.log("Response from fetchPlayListtrakcs: " + res.value)
     if (res.value === 'Success') {
@@ -134,7 +136,7 @@ const submit = async () => {
 
     console.log("Fetching Tracks from youtube public playlist..")
     submitted.value = true;
-    res.value = await userStore.fetchYoutubePlaylistTracks(url.value, youtubeAPI.value)
+    res.value = await useYoutubeStore().fetchYoutubePlaylistTracks(url.value, youtubeAPI.value)
 
     console.log("Response from fetchPlayListtrakcs: " + JSON.stringify(res.value))
     if (res.value === 'Success') {

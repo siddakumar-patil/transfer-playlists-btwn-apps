@@ -16,10 +16,10 @@
           max-width="900"
           height="800"
           >
-          <v-card-item class="bg-red-darken-4">
+          <v-card-item class="bg-green-darken-4">
 
           <v-card-title class="font-weight-bold">
-              {{ playlist.name  }}
+              {{ playlist?.name  }}
           </v-card-title>
 
           <v-card-sub-title class="font-weight-light text-h8" >
@@ -27,7 +27,7 @@
           </v-card-sub-title>
 
           <template v-slot:append>
-              <v-icon size="xxx-large">mdi-spotify</v-icon>
+              <v-icon size="xxx-large">mdi-youtube</v-icon>
           </template>
           </v-card-item>
 
@@ -46,23 +46,12 @@
               <template v-slot:prepend>
                   <v-avatar
                       size="50"
-                       rounded="0"
-                       v-if="item.track?.album?.images"
-                      >
-                      <v-img
-                          alt="Album Image"
-                          :src="trackImage(item.track?.album?.images)"
-                      ></v-img>
-                  </v-avatar>
-                  <v-avatar
-                      size="50"
-                      v-else
                       ><v-icon>mdi-youtube</v-icon>
                   </v-avatar>
               </template>
 
-              <v-list-item-title class="font-weight-bold">{{ item.track?.name }}</v-list-item-title>
-              <v-list-item-sub-title class="font-weight-light">{{ item.track.album?.name }}</v-list-item-sub-title>
+              <v-list-item-title class="font-weight-bold">{{ item?.name }}</v-list-item-title>
+              <v-list-item-sub-title class="font-weight-light">{{ item?.channelName}}</v-list-item-sub-title>
 
               <template v-slot:append>
                   <v-btn
@@ -85,7 +74,7 @@
       </v-card>
 
       <div class="text-center py-5">
-        <v-btn @click="onClick" size="large" color="red" rounded append-icon="mdi-youtube">Add PlayList to Youtube</v-btn>
+        <v-btn @click="onClick" size="large" color="green" rounded append-icon="mdi-spotify">Add PlayList to Spotify</v-btn>
       </div>
 
     </v-responsive>
@@ -102,12 +91,13 @@
       <div class="py-4" />
 
       <div class="text-center py-5">
-        <v-btn @click="onClick" size="large" color="primary" rounded append-icon="mdi-home">Back to Home</v-btn>
+        <v-btn @click="onClickHome" size="large" color="primary" rounded append-icon="mdi-home">Back to Home</v-btn>
       </div>
 
     </v-responsive>
   </v-container>
 </template>
+
 
 <script setup>
 import { ref, computed, onBeforeMount, onMounted } from "vue";
@@ -120,31 +110,22 @@ import useYoutubeStore from "@/stores/youtubeStore"
 const userStore = useUserStore()
 const youtubeStore = useYoutubeStore()
 
-const playlist = computed(() => userStore.getTracks)
-const youtubeAccessToken = computed(() => userStore.getYoutubeAccessToken)
+const playlist = computed(() => youtubeStore.getYoutubeVidoes)
+const spotifyAuthAccessToken = computed(() => userStore.getUserSpotifyAuthAccessToken)
 
 let isLoading = ref(false) // TODO: added loader or progress bar on click
 
-const trackImage = (images) => {
-  if (images[0]) {
-    return images[0]?.url
-  }
-  else {
-    return 'https://img.icons8.com/?size=100&id=cyBLpim2K7Ja&format=png&color=000000'
-  }
-}
-
 onBeforeMount(() => {
   // Storing Access token into Pinia Store
-  if (localStorage.getItem("youtubeAccessToken")) userStore.youtube_access_token = localStorage.getItem("youtubeAccessToken")
+  if (localStorage.getItem("spotifyAuthAccessToken")) userStore.spotify_auth_access_token = localStorage.getItem("spotifyAuthAccessToken")
 
   // Delete Accesstoken from LocalStorage for security
-  if (userStore.getYoutubeAccessToken !== null) localStorage.removeItem("youtubeAccessToken")
+  if (userStore.getUserSpotifyAuthAccessToken !== null) localStorage.removeItem("spotifyAuthAccessToken")
 })
 
 const onClick =async  () => {
   // TODO: remove below log
-  console.log("Creating Playlist on Youtube:"+playlist.value.name )
+  console.log("Creating Playlist on Spotify:"+playlist.value.name )
 
   const playlisTitle = playlist.value.name + '-Music Playlist'
   const playlistDescription = playlist.value.description == '' ? 'Music Playlist by ' + playlist.value?.owner?.display_name : playlist.value.description

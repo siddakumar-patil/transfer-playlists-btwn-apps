@@ -3,6 +3,8 @@ import axios from "axios"
 
 import useUserStore from "./userStore"
 
+const userStore= useUserStore()
+
 const useSpotifyStore = defineStore("spotify", {
   state: () => ({
     tracks: [],
@@ -161,6 +163,56 @@ const useSpotifyStore = defineStore("spotify", {
         return null // Handle errors appropriately
       }
     },
+
+    // Fetch Spotify MusicId from Results fetched on Spotify
+    async fetchSpotifyMusicIds(queries) {
+      console.log(" [ fetchSpotifyMusicIds ]: fetching Music Ids..")
+      const videoIds = []
+
+      if (!userStore.getUserSpotifyAuthAccessToken) {
+        console.error("Access token not found. Please authenticate first.")
+        return
+      }
+
+      if (queries.length === 0) {
+        console.error("Empty Queries")
+        return
+      }
+
+      for (const query of queries) {
+        try {
+          const results = await this.searchSpotifyTrackByQuery(userStore.getUserSpotifyAuthAccessToken, query)
+          videoIds.push(results[i]?.id?.videoId)
+        } catch (error) {
+          console.error(`Error searching for track "${track}":`, error)
+        }
+      }
+      return videoIds
+    },
+
+    // async createPlaylist(accessToken, userId, playlistName, description) {
+    //   const url = `https://api.spotify.com/v1/users/${userId}/playlists`;
+    
+    //   const response = await fetch(url, {
+    //     method: 'POST',
+    //     headers: {
+    //       'Authorization': `Bearer ${accessToken}`,
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //       name: playlistName,
+    //       description: description,
+    //       public: false, // Set to true if you want it public
+    //     }),
+    //   });
+    
+    //   if (!response.ok) {
+    //     throw new Error(`Error creating playlist: ${response.statusText}`);
+    //   }
+    
+    //   const data = await response.json();
+    //   return data; // Return the created playlist details
+    // },
 
   },
 })

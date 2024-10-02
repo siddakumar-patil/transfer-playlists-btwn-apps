@@ -5,7 +5,7 @@
         max-width="900"
       >
         <div class="text-center">
-          <h1 class="text-h2 font-weight-bold px-4 py-4">Choose a Destination</h1>
+          <h1 class="text-h2 font-weight-bold px-4 py-4">Choose a Destination {{ source }}</h1>
           <h2 class="text-h4 font-weight-ligjht px-4 py-4">Choose a Destination Music Application you want your playlist to be Added to</h2>
         </div>
   
@@ -22,10 +22,10 @@
                   variant="outlined"
                   link
                   @click="onClick(app.name)"
-                  :disabled="app.isSource"
+                  :disabled="app.name == source"
                   >
                   <template #title>
-                      <h2 class="text-h5 font-weight-bold">{{ app.name }} {{ app.isSource ? '(Selected Source)' : '' }}</h2>
+                      <h2 class="text-h5 font-weight-bold">{{ app.name }} {{ app.name == source ? '(Selected Source)' : '' }}</h2>
                   </template>
               </v-card>
           </v-col>
@@ -50,9 +50,13 @@
 </template>
 
 <script setup>
-import useAppStore from "@/stores/appStore";
 import { computed, ref } from "vue"
 import { useRouter } from "vue-router"
+
+import useAppStore from "@/stores/appStore"
+import useUserStore from "@/stores/userStore"
+import useYoutubeStore from "@/stores/youtubeStore"
+
 
 const router = useRouter();
 
@@ -71,12 +75,17 @@ const props = defineProps({
     }
 })
 
+
+const appStore = useAppStore()
+// const userStore = useUserStore()
+const youtubeStore = useYoutubeStore()
+
 // Fetch Client ID and Secrets from .env file
 const clientId = import.meta.env.VITE_APP_YOUTUBE_CLIENT_ID
 const clientSecret = import.meta.env.VITE_APP_YOUTUBE_CLIENT_SECRET
 const apiKey = import.meta.env.VITE_APP_YOUTUBE_API_KEY
 
-const source = computed(()=> useAppStore().getSrc)
+const source = computed(()=> appStore.getSrc)
 
 // TODO: remove below hardcoded list
 const applist = ref([
@@ -84,31 +93,32 @@ const applist = ref([
         name: "Spotify",
         prependIcon: "mdi-spotify",
         appendIcon: "mdi-open-in-new",
-        isSource: true, // Remove hardcoded value
+        // isSource: true, // Remove hardcoded value
         redirectRoute: "/spotifysrc"
     },
     {
         name: "Apple Music",
         prependIcon: "mdi-apple",
         appendIcon: "mdi-open-in-new",
-        isSource: false,
+        // isSource: false,
         redirectRoute: "/spotifysrc" // TODO: Change
     },
     {
-        name: "Youtube Music",
+        name: "Youtube",
         prependIcon: "mdi-youtube",
         appendIcon: "mdi-open-in-new",
-        isSource: false,
+        // isSource: false,
         redirectRoute: "/spotifysrc"// TODO: Change
     },
 ])
 
 const onClick = (name) => {
-      if (name  == 'Youtube') {
-    oauthSignIn()
+    if (name == 'Youtube') {
+        youtubeStore.oauthSignIn()
     }
-    else if (name  == 'Spotify') {
+    else if (name == 'Spotify') {
         console.log("APp type SPotify")
+        useUserStore().generateSpotifyAuthAccessToken()
     }
 }
 

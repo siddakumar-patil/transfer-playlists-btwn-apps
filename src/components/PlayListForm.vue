@@ -9,13 +9,20 @@
         height="150"
         src="@/assets/logo.png"
       /> -->
-
+    
+      <p>{{ props }}</p>
       <div class="text-center">
-        <h1 class="text-h2 font-weight-bold px-4 py-4">Paste your playlist from {{ serviceProviderName }} below </h1>
+        <v-icon 
+          class="mb-4"
+          size="150">
+          mdi-{{serviceProviderName}}
+        </v-icon>
+
+        <h1 class="text-h2 font-weight-bold px-4 py-4">Paste your playlist from {{ capitalize(serviceProviderName) }} below </h1>
         <h1 class="text-h5 font-weight-light px-4 py-4">Please make sure it's a public playlist</h1>
         <v-form ref="form" v-model="valid">
           <v-text-field
-            label="Paste your spotify playlist url here:)"
+            :label="label"
             variant="solo"
             v-model="url"
             :rules="[urlValidator]"
@@ -32,6 +39,9 @@
           <v-alert v-if="res == 'Success'" type="sucess">
            Fetched 
           </v-alert>
+          <v-alert class="my-4 mx-7" type="error" >
+            Something went wrong:(
+          </v-alert>
       </v-form>
 
       </div>
@@ -42,28 +52,19 @@
   </v-container>
 </template>
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, capitalize } from "vue";
 import { useRouter } from "vue-router"
 
 import useUserStore from "@/stores/userStore"
+import useAppStore from "@/stores/appStore";
 
 const router = useRouter()
 const userStore = useUserStore()
 
 const props = defineProps({
-  hintUrl: {
-    type: String,
-    required: true,
-    default: "https://open.spotify.com/playlist/xyz"
-  },
   serviceProviderName: {
     type: String,
     required: true
-  },
-  urlPattern: {
-    type: RegExp,
-    required: true,
-    default: /^(https?:\/\/)?([a-z\d-]+\.)+[a-z]{2,}(:\d+)?(\/[^\s]*)?$/i,
   },
 })
 
@@ -73,7 +74,31 @@ let submitted = ref(false);
 let res = ref();
 let status = ref(true);
 
-const accessToken = computed(() => userStore.getUserSpotifyUnAuthAccessToken)
+let regex=ref('')
+let hintUrl=ref('')
+let label=ref('')
+
+const spotifyAccessToken = computed(() => userStore.getUserSpotifyUnAuthAccessToken)
+const youtubeAPI = computed(() => userStore.getYoutubeAPIKey)
+
+onMounted(async () => {
+  if (props.serviceProviderName == 'spotify') {
+    label.value = "Paste your Spotify playlist url here:)"
+    regex.value = /^(https?:\/\/)?(open\.spotify\.com\/playlist\/|spotify:playlist:)([a-zA-Z0-9]{22})/;
+    hintUrl.value = "https://open.spotify.com/playlist/xyz"
+
+    // Generating AccessToken for Spotify API
+    await useUserStore().generateSpotifyAccessToken()
+  }
+  else if (props.serviceProviderName == 'youtube') {
+    label.value = "Paste your Youtube playlist url here:)"
+    regex.value = /^https?:\/\/(www\.)?youtube\.com\/playlist\?list=([A-Za-z0-9_-]+)/;
+    hintUrl.value = "https://www.youtube.com/playlist/xyz"
+    await useUserStore().generateSpotifyAccessToken()
+    useUserStore().setYoutubeAPIkey()
+  }
+})
+
 
 const copyFromClipBoard = async () => {
   try {
@@ -90,28 +115,33 @@ const copyFromClipBoard = async () => {
 }
 
 const urlValidator = (value) => {
-  // const spotifyPlaylistPattern = /^(https?:\/\/)?(open\.spotify\.com\/playlist\/|spotify:playlist:)([a-zA-Z0-9]{22})/;
-
-  // TODO: use below url in future once you've multiple music services
-  //const urlPattern = /^(https?:\/\/)?([a-z\d-]+\.)+[a-z]{2,}(:\d+)?(\/[^\s]*)?$/i;
-  return props.urlPattern.test(value) || 'Please Enter a vaild Playlist Url!';
+  if (regex.value) return regex.value.test(value) || 'Please Enter a vaild ' + capitalize(props.serviceProviderName) + ' Playlist Url!';
 }
 
-// const  getPlaylistId = (url) => {
-//     const regex = /(?:playlist\/|spotify:playlist:)([a-zA-Z0-9]{22})/;
-//     const match = url.match(regex);
-//     return match ? match[1] : null;
-// }
-
 const submit = async () => {
-  console.log("Form Submitted! Implementation yet to be done" + accessToken)
-  submitted.value = true;
-  res.value =  await userStore.fetchPlaylistTracks(url.value, accessToken.value)
+  if (props.serviceProviderName == 'spotify') {
+    console.log("Form Submitted! Implementation yet to be done" + spotifyAccessToken)
+    submitted.value = true;
+    res.value = await useAppStore().fetchSpotifyPlaylistTracks(url.value, spotifyAccessToken.value)
 
-  console.log("Response from fetchPlayListtrakcs: " + res.value)
-  if (res.value === 'Success') {
-    status.value=true
-    router.push({ path: "/spotifyplaylist" })
+    console.log("Response from fetchPlayListtrakcs: " + res.value)
+    if (res.value === 'Success') {
+      status.value = true
+      router.push({ path: "/spotifyplaylist" })
+    }
+  }
+  else if(props.serviceProviderName == 'youtube') {
+
+    console.log("Fetching Tracks from youtube public playlist..")
+    submitted.value = true;
+    res.value = await userStore.fetchYoutubePlaylistTracks(url.value, youtubeAPI.value)
+
+    console.log("Response from fetchPlayListtrakcs: " + JSON.stringify(res.value))
+    if (res.value === 'Success') {
+      status.value = true
+      router.push({ path: "/youtubeplaylist" })
+    }
+
   }
 }
 

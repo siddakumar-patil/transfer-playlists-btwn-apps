@@ -1,14 +1,10 @@
 <template>
-    <PlayListForm />
-  </template>
+  <PlayListForm  
+    serviceProviderName="youtube" 
+  />
+</template>
+
 <script setup>
-import { defineAsyncComponent, onMounted } from "vue"
-
-import useUserStore from "@/stores/userStore"
-
+import { defineAsyncComponent } from "vue"
 const PlayListForm = defineAsyncComponent(() => import("@/components/PlayListForm.vue"))
-
-onMounted(async () => {
-  await useUserStore().generateAccessToken()
-})
 </script>

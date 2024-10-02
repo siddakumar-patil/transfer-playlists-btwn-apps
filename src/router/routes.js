@@ -1,3 +1,5 @@
+import { mergeProps } from "vue";
+
 export default [
   {
     path: "/",
@@ -40,9 +42,9 @@ export default [
     component: () => import("@/views/SpotifyPlaylistView.vue"),
   },
   {
-    path: "/applemusicsrc",
-    name: 'AppleMusicSource', // TODO: Add page
-    component: () => import("@/views/PlayListSourceView.vue"),
+    path: "/youtubeplaylist",
+    name: 'YoutubePlaylist',
+    component: () => import("@/views/YoutubePlaylistView.vue"),
   },
   {
     path: "/NotFound",

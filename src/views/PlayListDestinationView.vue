@@ -16,12 +16,12 @@
               <v-card
                   :append-icon="app.appendIcon"
                   class="py-4"
-                  :color="app.isSource ? 'red' : 'surface-variant'"
+                  :color="app.name == source ? 'red' : 'surface-variant'"
                   :prepend-icon="app.prependIcon"
                   rounded="lg"
                   variant="outlined"
                   link
-                  @click="onClick(url)"
+                  @click="onClick(app.name)"
                   :disabled="app.isSource"
                   >
                   <template #title>
@@ -50,7 +50,8 @@
 </template>
 
 <script setup>
-import { ref } from "vue"
+import useAppStore from "@/stores/appStore";
+import { computed, ref } from "vue"
 import { useRouter } from "vue-router"
 
 const router = useRouter();
@@ -74,6 +75,8 @@ const props = defineProps({
 const clientId = import.meta.env.VITE_APP_YOUTUBE_CLIENT_ID
 const clientSecret = import.meta.env.VITE_APP_YOUTUBE_CLIENT_SECRET
 const apiKey = import.meta.env.VITE_APP_YOUTUBE_API_KEY
+
+const source = computed(()=> useAppStore().getSrc)
 
 // TODO: remove below hardcoded list
 const applist = ref([
@@ -100,65 +103,13 @@ const applist = ref([
     },
 ])
 
-const onClick = (appUrl) => {
-    //   if (appUrl) {
+const onClick = (name) => {
+      if (name  == 'Youtube') {
     oauthSignIn()
-    // }
-}
-
-/*
-* Create form to request access token from Google's OAuth 2.0 server.
-*/
-function oauthSignIn() {
-    console.log(" [ oauthSignIn ]:Authenticating User ")
-
-    const width = 600;
-    const height = 700;
-    const left = (window.innerWidth / 2) - (width / 2);
-    const top = (window.innerHeight / 2) - (height / 2);
-
-    // Google's OAuth 2.0 endpoint for requesting an access token
-    var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
-
-    // Create <form> element to submit parameters to OAuth 2.0 endpoint.
-    var form = document.createElement('form');
-    form.setAttribute('method', 'GET'); // Send as a GET request.
-    form.setAttribute('action', oauth2Endpoint);
-
-    // Parameters to pass to OAuth 2.0 endpoint.
-    var params = {
-        'client_id': clientId,
-        'redirect_uri': 'http://localhost:5000/youtubecallback',
-        'response_type': 'token',
-        'scope': 'https://www.googleapis.com/auth/youtube.force-ssl',
-        'include_granted_scopes': 'true',
-        'state': 'pass-through value'
-    };
-
-    // Add form parameters as hidden input values.
-    for (var p in params) {
-        var input = document.createElement('input');
-        input.setAttribute('type', 'hidden');
-        input.setAttribute('name', p);
-        input.setAttribute('value', params[p]);
-        form.appendChild(input);
     }
-
-    // Add form to page and submit it to open the OAuth 2.0 endpoint.
-    document.body.appendChild(form);
-    // form.submit();
-
-    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=http://localhost:5000/youtubecallback&response_type=token&scope=https://www.googleapis.com/auth/youtube.force-ssl`;
-
-    const popup = window.open(authUrl, 'Google Login', `width=${width},height=${height},top=${top},left=${left}`);
-
-    // Handle the popup close event if necessary
-    const timer = setInterval(() => {
-        if (popup.closed) {
-            clearInterval(timer);
-            // Optionally handle cleanup or state updates here
-        }
-    }, 1000);
+    else if (name  == 'Spotify') {
+        console.log("APp type SPotify")
+    }
 }
 
 </script>

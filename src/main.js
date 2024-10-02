@@ -32,4 +32,6 @@ window.addEventListener("message", (event) => {
 })
   
 
+// TODO: Create theme
+
 app.mount('#app')

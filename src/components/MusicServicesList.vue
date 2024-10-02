@@ -4,14 +4,14 @@
       class="align-centerfill-height mx-auto"
       max-width="900"
     >
-      <div class="text-center">
+    <div class="text-center">
         <h1 class="text-h2 font-weight-bold px-4 py-4">Choose a Source</h1>
         <h2 class="text-h4 font-weight-ligjht px-4 py-4">Choose a Source Music Application you want your playlist to be fetched from</h2>
-      </div>
+    </div>
 
-      <div class="py-4" />
+    <div class="py-4" />
 
-      <v-row>
+    <v-row>
         <v-col cols="6" v-for="app in applist" :key="app.name">
             <v-card
                 :append-icon="app.appendIcon"
@@ -21,7 +21,7 @@
                 rounded="lg"
                 variant="outlined"
                 link
-                @click="onClick(app.redirectRoute)"
+                @click="onClick(app.redirectRoute,app.name)"
                 >
                 <template #title>
                     <h2 class="text-h5 font-weight-bold">{{ app.name }}</h2>
@@ -48,9 +48,12 @@
   </v-container>
   </template>
 <script setup>
+import useAppStore from "@/stores/appStore";
 import { ref } from "vue"
 
 import { useRouter } from "vue-router"
+
+const router = useRouter()
 
 const props = defineProps({
     appsList: {
@@ -78,18 +81,19 @@ const applist = ref([
         redirectRoute: "/spotifysrc" // TODO: Change
     },
     {
-        name: "Youtube Music",
+        name: "Youtube",
         prependIcon: "mdi-youtube",
         appendIcon: "mdi-open-in-new",
         redirectRoute: "/spotifysrc"// TODO: Change
     },
 ])
 
-
-const router = useRouter()
-
-const onClick = (redirectRoute) => {
-    if (redirectRoute) router.push({ path: redirectRoute })
+const onClick = (redirectRoute, source) => {
+    useAppStore().source=source
+    console.log("Setting Source as:"+source)
+    if (redirectRoute) router.push({
+        path: redirectRoute
+    })
 }
 </script>
 

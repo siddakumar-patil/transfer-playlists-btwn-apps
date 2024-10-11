@@ -112,13 +112,13 @@ const applist = ref([
     },
 ])
 
-const onClick = (name) => {
+const onClick = async (name) => {
     if (name == 'Youtube') {
         youtubeStore.oauthSignIn()
     }
     else if (name == 'Spotify') {
         console.log("APp type SPotify")
-        useUserStore().generateSpotifyAuthAccessToken()
+        await useUserStore().generateSpotifyAuthAccessToken()
     }
 }
 

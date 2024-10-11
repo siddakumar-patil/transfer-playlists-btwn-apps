@@ -9,6 +9,27 @@
         <h1 class="text-h2 font-weight-bold px-4 py-4">Playlist- {{ playlist.name }}</h1>
       </div>
 
+      <div class="text-center" v-if="isLoading">
+        <h1 class="text-h3 font-weight-bold px-4 py-4">Transfering Playlist<v-icon 
+          class="mb-4"
+          size="50">
+          mdi-progress-check
+        </v-icon></h1>
+        <v-progress-linear
+          color="green"
+          indeterminate
+        ></v-progress-linear>
+      </div>
+
+      <div class="text-center" v-else>
+        <h1 class="text-h3 font-weight-bold px-4 py-4">Transfer Complete  <v-icon 
+          class="mb-4"
+          size="50">
+          mdi-check-circle-outline
+        </v-icon>
+        </h1>
+      </div>
+
       <div class="py-4" />
 
       <v-card
@@ -37,7 +58,7 @@
           <v-divider></v-divider>
 
           <v-virtual-scroll
-              :items="playlist.tracks.items"
+              :items="playlist?.tracks?.items"
               height="940"
               item-height="50"
           >
@@ -105,6 +126,7 @@ import { useRouter } from "vue-router"
 
 import useUserStore from "@/stores/userStore"
 import useYoutubeStore from "@/stores/youtubeStore"
+import useSpotifyStore from "@/stores/spotifyStore";
 
 // const router = useRouter()
 const userStore = useUserStore()
@@ -124,23 +146,27 @@ onBeforeMount(() => {
 })
 
 const onClick =async  () => {
-  // TODO: remove below log
-  console.log("Creating Playlist on Spotify:"+playlist.value.name )
+  console.log("Creating Playlist on Spotify:" + playlist.value.name)
 
+  isLoading.value = true;
   const playlisTitle = playlist.value.name + '-Music Playlist'
   const playlistDescription = playlist.value.description == '' ? 'Music Playlist by ' + playlist.value?.owner?.display_name : playlist.value.description
 
   if (playlist.value?.tracks) {
-    
-    const playlistId = await youtubeStore.createYoutubePrivatePlaylist(youtubeAccessToken.value, playlisTitle, playlistDescription)
-    const queries = await youtubeStore.createYoutubeQueriesList(playlist.value?.tracks?.items)
-    const videoIds = await youtubeStore.fetchYoutubeMusicVideoIds(queries)
-  
-    await youtubeStore.addTracksToYoutubePlaylistUsingVideoIds(youtubeAccessToken, playlistId, videoIds)
+
+    const userId = await useUserStore().getSpotifyUserId()
+
+    const playlistId = await useSpotifyStore().createPlaylist(userId, playlisTitle, playlistDescription)
+    const queries = await useSpotifyStore().createSpotifyQueriesList(playlist.value?.tracks?.items)
+    const trackIds = await useSpotifyStore().fetchSpotifyTrackId(queries)
+    await useSpotifyStore().addTracksToSpotifyPlaylistUsingTrackIds(playlistId?.id, trackIds)
+
+    isLoading.value = false;
   }
-  // else if (playlist.value?.items) {
-  //   const queries = youtubeStore.createYoutubeQueriesList(playlist.value?.items)
-  // }
+  else {
+    console.error('Tracks Missing!')
+  }
+
 }
 
 </script>

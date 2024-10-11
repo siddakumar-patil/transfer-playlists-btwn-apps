@@ -89,12 +89,12 @@
 import { computed } from "vue";
 import { useRouter } from "vue-router"
 
-import useUserStore from "@/stores/userStore"
+import useYoutubeStore from "@/stores/youtubeStore";
+import useSpotifyStore from "@/stores/spotifyStore";
 
 const router = useRouter()
-const userStore = useUserStore()
 
-const playlist = computed(() => userStore.getTracks)
+const playlist = computed(() => useSpotifyStore().getTracks)
 
 const trackImage = (images) => {
     if (images[0]) {

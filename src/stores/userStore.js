@@ -8,6 +8,7 @@ const useUserStore = defineStore("user", {
   state: () => ({
     user_spotify_unauth_access_token: null,
     spotify_auth_access_token: null,
+    spotify_user_id: null,
     // tracks: [], // SPotify
     youtube_access_token: null,
     youtube_api_key: null,
@@ -17,6 +18,10 @@ const useUserStore = defineStore("user", {
   getters: {
     getUserSpotifyUnAuthAccessToken(state) {
       return state.user_spotify_unauth_access_token
+    },
+
+    getUserSpotifyUserId(state) {
+      return state.spotify_user_id
     },
 
     getUserSpotifyAuthAccessToken(state) {
@@ -99,8 +104,6 @@ const useUserStore = defineStore("user", {
       const clientId = import.meta.env.VITE_APP_SPOTIFY_CLIENT_ID
       const clientSecret = import.meta.env.VITE_APP_SPOTIFY_CLIENT_SECRET
 
-      const tokenUrl = "https://accounts.spotify.com/api/token"
-
       const width = 600
       const height = 700
       const left = window.innerWidth / 2 - width / 2
@@ -111,10 +114,10 @@ const useUserStore = defineStore("user", {
 
       // Parameters to pass to SPOTIFY endpoint.
       const params = {
-        client_id: clientId, 
-        redirect_uri: "http://localhost:5000/spotifycallback", 
-        response_type: "code", // Use 'code' for authorization code flow
-        scope: "playlist-modify-public playlist-modify-private", // Scopes you need
+        client_id: clientId,
+        redirect_uri: "http://localhost:5000/spotifycallback",
+        response_type: "code",
+        scope: "user-read-private user-read-email playlist-modify-public playlist-modify-private", // Scopes you need
         state: "pass-through value", // Optional state parameter
       }
 
@@ -133,6 +136,72 @@ const useUserStore = defineStore("user", {
           // Optionally handle cleanup or state updates here
         }
       }, 1000)
+    },
+
+    async exchangeCodeForAccessToken(code) {
+      const clientId = import.meta.env.VITE_APP_SPOTIFY_CLIENT_ID
+      const clientSecret = import.meta.env.VITE_APP_SPOTIFY_CLIENT_SECRET // Ensure you have this in your .env file
+      const redirectUri = "http://localhost:5000/spotifycallback"
+
+      const tokenUrl = "https://accounts.spotify.com/api/token"
+
+      const params = new URLSearchParams()
+      params.append("grant_type", "authorization_code")
+      params.append("code", code)
+      params.append("redirect_uri", redirectUri)
+      params.append("client_id", clientId)
+      params.append("client_secret", clientSecret)
+
+      const response = await fetch(tokenUrl, {
+        method: "POST",
+        body: params,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to exchange code for access token")
+      }
+
+      const data = await response.json()
+
+      if(data) useUserStore().spotify_auth_access_token = data
+
+      console.log(" [ exchangeCodeForAccessToken ]: Access Token Generated: " + data.access_token)
+      return data.access_token
+    },
+
+    async getSpotifyUserId() {
+      const accessToken = this.getUserSpotifyAuthAccessToken
+
+      console.log(" [ getSpotifyUserId ]: Access Token: " + accessToken)
+      
+      const url = "https://api.spotify.com/v1/me"
+
+      if (accessToken) {
+        try {
+          const userResponse = await fetch(url, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+
+          if (!userResponse.ok) {
+            throw new Error(`[ getSpotifyUserId ]: Error fetching spotify userId: ${response.statusText}`)
+          }
+
+          const userData = await userResponse.json()
+          const userId = userData.id
+
+          this.spotify_user_id = userId
+
+          console.log("User ID:", userId)
+          return userId
+        } catch (error) {
+          console.error(" [ getSpotifyUserId ]: Error fetching spotify userId:" + error)
+        }
+      }
     },
   },
 })

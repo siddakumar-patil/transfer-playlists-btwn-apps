@@ -74,12 +74,12 @@ const applist = ref([
         appendIcon: "mdi-open-in-new",
         redirectRoute: "/spotifysrc"
     },
-    {
-        name: "Apple Music",
-        prependIcon: "mdi-apple",
-        appendIcon: "mdi-open-in-new",
-        redirectRoute: "/spotifysrc" // TODO: Change
-    },
+    // {
+    //     name: "Apple Music",
+    //     prependIcon: "mdi-apple",
+    //     appendIcon: "mdi-open-in-new",
+    //     redirectRoute: "/spotifysrc" // TODO: Change
+    // },
     {
         name: "Youtube",
         prependIcon: "mdi-youtube",

@@ -26,7 +26,7 @@ let hash = ref()
 let params = ref()
 
 // Function to parse the URL fragment
-function parseFragment() {
+async function parseFragment() {
   hash.value = window.location.search.substring(1); // Remove the '#'
   params = new URLSearchParams(hash.value);
 
@@ -39,9 +39,14 @@ function parseFragment() {
   const state = params.get('state'); // Optional state parameter
 
   if (code) {
-    useUserStore().spotify_auth_access_token = code
+
+    const accessToken =await useUserStore().exchangeCodeForAccessToken(code);
+    // useUserStore().spotify_auth_access_token = accessToken
+
+    await useUserStore().getSpotifyUserId();
+
     // Send the code back to the opener window
-    window.opener.postMessage({ code }, '*'); // Use '*' or specify the origin
+    window.opener.postMessage({ accessToken }, '*'); // Use '*' or specify the origin
 
     router.push({ path: '/youtubeplaylistdest' })
     window.close(); // Close the popup

@@ -40,9 +40,9 @@ window.addEventListener("message", (event) => {
     return
   }
 
-  if (event.data.code) {
+  if (event.data.accessToken) {
     // Store the access token securely
-    localStorage.setItem("spotifyAuthAccessToken", event.data.code)
+    localStorage.setItem("spotifyAuthAccessToken", event.data.accessToken)
     console.log("Access token received:", event)
 
     // Optionally, redirect or update the UI
@@ -52,5 +52,6 @@ window.addEventListener("message", (event) => {
   
 
 // TODO: Create theme
+// TODO: add plugin to remove logs in production
 
 app.mount('#app')

@@ -142,12 +142,14 @@ const useSpotifyStore = defineStore("spotify", {
             JSON.stringify(data.tracks.items[0])
         )
 
-        if (data.tracks.items.length > 0) {
+        if (data?.tracks?.items[0]) {
           // Return the first track from the search results
           const track = data.tracks.items[0]
           // TODO: format data propery
 
           return {
+            id: track.id,
+            uri: track.uri,
             name: track.name,
             artist: track.artists[0].name,
             album: track.album.name,
@@ -190,29 +192,114 @@ const useSpotifyStore = defineStore("spotify", {
       return videoIds
     },
 
-    // async createPlaylist(accessToken, userId, playlistName, description) {
-    //   const url = `https://api.spotify.com/v1/users/${userId}/playlists`;
-    
-    //   const response = await fetch(url, {
-    //     method: 'POST',
-    //     headers: {
-    //       'Authorization': `Bearer ${accessToken}`,
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //       name: playlistName,
-    //       description: description,
-    //       public: false, // Set to true if you want it public
-    //     }),
-    //   });
-    
-    //   if (!response.ok) {
-    //     throw new Error(`Error creating playlist: ${response.statusText}`);
-    //   }
-    
-    //   const data = await response.json();
-    //   return data; // Return the created playlist details
-    // },
+    async createPlaylist(userId, playlistName, description) {
+      const url = `https://api.spotify.com/v1/users/${userId}/playlists`
+
+      const accessToken = useUserStore().getUserSpotifyAuthAccessToken
+
+      console.log(" [ createPlaylist ]: Access Token: " + accessToken)
+
+      if (accessToken) {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: playlistName,
+            description: description,
+            public: false, // Set to true if you want it public
+          }),
+        })
+
+        if (!response.ok) {
+          throw new Error(`Error creating playlist: ${response.statusText}`)
+        }
+
+        const data = await response.json()
+        return data // Return the created playlist details
+      } else {
+        console.error(" [ createPlaylist ]: Missing Access Token")
+      }
+    },
+
+    // TODO:Merge
+    createSpotifyQueriesList(tracks) {
+      let queries = []
+      for (let i = 0; i < tracks.length; i++) {
+        const query = tracks[i]?.name
+        queries.push(query)
+      }
+      console.log(
+        " [ createSpotifyQueriesList ]: generated Queries List with Size:" + queries.length + "\n Queries: " + queries
+      )
+      return queries
+    },
+
+    // Fetch Tracks trackId from Results fetched on Spotify
+    async fetchSpotifyTrackId(queries) {
+      console.log(" [ fetchSpotifyTrackId ]: fetching Videos Ids..")
+      const trackIds = []
+
+      if (!userStore.getUserSpotifyAuthAccessToken) {
+        console.error("Access token not found. Please authenticate first.")
+        return
+      }
+
+      if (queries.length === 0) {
+        console.error("Empty Queries")
+        return
+      }
+
+      for (const query of queries) {
+        try {
+          const results = await this.searchSpotifyTrackByQuery(userStore.getUserSpotifyAuthAccessToken, query)
+          console.log(" [ fetchSpotifyTrackId ]: fetching Track Ids.."+results)
+          if (results?.uri) {
+            trackIds.push(results?.uri)
+            console.log(" [ fetchSpotifyTrackId ]: Track Id fetched")
+          }
+          else{
+            console.log(" [ fetchSpotifyTrackId ]: Couldn't find track: "+'[' + query + ']'+ " on Spotify")
+          }
+        } catch (error) {
+          console.error(`Error searching for track "${query}":`, error)
+        }
+      }
+      return trackIds
+    },
+
+    // Adding Tracks to a Playlist using trackId fetched in Spotify
+    async addTracksToSpotifyPlaylistUsingTrackIds( playlistId, trackIds) {
+
+      const url=  `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
+
+      const body = JSON.stringify({ uris: trackIds });
+      const accessToken = useUserStore().getUserSpotifyAuthAccessToken
+      if(accessToken){
+        try {
+          const response = await fetch(url, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+            },
+            body: body,
+          })
+  
+          if (!response.ok) {
+            throw new Error(`Error adding tracks: ${response.statusText}`)
+          }
+  
+          const data = await response.json()
+          return data // Return the added tracks details
+        } catch (e) {
+          console.error("Error Adding tracks" + e)
+        }
+      } 
+
+    },
 
   },
 })

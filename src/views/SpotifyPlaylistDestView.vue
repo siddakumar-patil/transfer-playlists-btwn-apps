@@ -21,9 +21,10 @@
         ></v-progress-linear>
       </div>
 
-      <div class="text-center" v-else>
-        <h1 class="text-h3 font-weight-bold px-4 py-4">Transfer Complete  <v-icon 
+      <div class="text-center" v-if="!isLoading && isTransferCompleted">
+        <h1 class="text-h3 font-weight-bold px-4 py-4">Transfer Completed!<v-icon 
           class="mb-4"
+          color="green"
           size="50">
           mdi-check-circle-outline
         </v-icon>
@@ -94,9 +95,14 @@
           </v-virtual-scroll>
       </v-card>
 
-      <div class="text-center py-5">
+      <div class="text-center py-5" v-if="!isTransferCompleted">
         <v-btn @click="onClick" size="large" color="green" rounded append-icon="mdi-spotify">Add PlayList to Spotify</v-btn>
       </div>
+
+      <div class="text-center py-5" v-else>
+        <v-btn @click="router.push('/')" size="large" color="blue" rounded append-icon="mdi-home">Return to Home</v-btn>
+      </div>
+
 
     </v-responsive>
 
@@ -128,14 +134,15 @@ import useUserStore from "@/stores/userStore"
 import useYoutubeStore from "@/stores/youtubeStore"
 import useSpotifyStore from "@/stores/spotifyStore";
 
-// const router = useRouter()
+const router = useRouter();
+
 const userStore = useUserStore()
 const youtubeStore = useYoutubeStore()
 
 const playlist = computed(() => youtubeStore.getYoutubeVidoes)
-const spotifyAuthAccessToken = computed(() => userStore.getUserSpotifyAuthAccessToken)
 
-let isLoading = ref(false) // TODO: added loader or progress bar on click
+let isLoading = ref(false)
+let isTransferCompleted = ref(false)
 
 onBeforeMount(() => {
   // Storing Access token into Pinia Store
@@ -162,6 +169,7 @@ const onClick =async  () => {
     await useSpotifyStore().addTracksToSpotifyPlaylistUsingTrackIds(playlistId?.id, trackIds)
 
     isLoading.value = false;
+    isTransferCompleted.value = true;
   }
   else {
     console.error('Tracks Missing!')

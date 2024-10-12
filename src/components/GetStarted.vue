@@ -4,14 +4,9 @@
       class="align-centerfill-height mx-auto"
       max-width="900"
     >
-      <!-- <v-img
-        class="mb-4"
-        height="150"
-        src="@/assets/logo.png"
-      /> -->
 
       <div class="text-center">
-        <h1 class="text-h2 font-weight-bold px-4 py-4">Now, <br>Transfer your playlist from One Music App to Other</h1>
+        <h1 class="text-h2 font-weight-bold px-4 py-4">Transfer your playlist from Between Music Apps <v-icon  size="small">mdi-music</v-icon></h1>
         <v-btn color="primary" variant="outlined" block  @click="onClick" >Try it out!</v-btn>
       </div>
 

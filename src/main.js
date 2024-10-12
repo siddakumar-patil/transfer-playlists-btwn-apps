@@ -53,5 +53,6 @@ window.addEventListener("message", (event) => {
 
 // TODO: Create theme
 // TODO: add plugin to remove logs in production
+// TODO: Integrate Ads
 
 app.mount('#app')

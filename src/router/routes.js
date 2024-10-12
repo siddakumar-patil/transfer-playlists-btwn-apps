@@ -61,4 +61,9 @@ export default [
     name: "NotFound",
     component: () => import("@/views/PageNotFoundView.vue"),
   },
+  {
+    path:'/:pathMatch(.*)*',
+    name: "NotFound",
+    component: () => import("@/views/PageNotFoundView.vue"),
+  },
 ]

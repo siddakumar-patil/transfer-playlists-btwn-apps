@@ -227,9 +227,9 @@ const useYoutubeStore = defineStore("youtube", {
       for (const query of queries) {
         try {
           const results = await this.searchYouTubeMusicVideos(userStore.getYoutubeAccessToken, query)
-          videoIds.push(results[i]?.id?.videoId)
+          videoIds.push(results[0]?.id?.videoId)
         } catch (error) {
-          console.error(`Error searching for track "${track}":`, error)
+          console.error(`Error searching for track "${query}":`, error)
         }
       }
       return videoIds
@@ -238,6 +238,8 @@ const useYoutubeStore = defineStore("youtube", {
     //Create form to request access token from Google's OAuth 2.0 server.
     oauthSignIn() {
       console.log(" [ oauthSignIn ]:Authenticating User ")
+
+      const clientId = import.meta.env.VITE_APP_YOUTUBE_CLIENT_ID
 
       const width = 600
       const height = 700

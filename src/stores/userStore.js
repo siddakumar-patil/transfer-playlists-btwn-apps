@@ -9,10 +9,8 @@ const useUserStore = defineStore("user", {
     user_spotify_unauth_access_token: null,
     spotify_auth_access_token: null,
     spotify_user_id: null,
-    // tracks: [], // SPotify
     youtube_access_token: null,
-    youtube_api_key: null,
-    // youtubeVidoes: [],
+    youtube_api_key: null
   }),
 
   getters: {

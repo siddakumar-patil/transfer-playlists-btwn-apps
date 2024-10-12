@@ -37,7 +37,7 @@
           <v-divider></v-divider>
 
           <v-virtual-scroll
-              :items="playlist.tracks.items"
+              :items="playlist?.tracks?.items"
               height="940"
               item-height="50"
           >
@@ -115,12 +115,13 @@ import { useRouter } from "vue-router"
 
 import useUserStore from "@/stores/userStore"
 import useYoutubeStore from "@/stores/youtubeStore"
+import useSpotifyStore from "@/stores/spotifyStore";
 
 // const router = useRouter()
 const userStore = useUserStore()
 const youtubeStore = useYoutubeStore()
 
-const playlist = computed(() => userStore.getTracks)
+const playlist = computed(() => useSpotifyStore().getTracks)
 const youtubeAccessToken = computed(() => userStore.getYoutubeAccessToken)
 
 let isLoading = ref(false) // TODO: added loader or progress bar on click

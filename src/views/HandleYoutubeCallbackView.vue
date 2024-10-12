@@ -46,7 +46,7 @@ function parseFragment() {
 
   if (accessToken) {;
     useUserStore().youtube_access_token = accessToken.value
-    window.opener.postMessage({ accessToken }, '*'); // Use '*' or specify the origin
+    window.opener.postMessage({ accessToken, app:'Youtube' }, '*'); // Use '*' or specify the origin
    
     router.push({ path: '/youtubeplaylistdest' })
     window.close(); // Close the popup

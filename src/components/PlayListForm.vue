@@ -4,13 +4,6 @@
       class="align-centerfill-height mx-auto"
       max-width="900"
     >
-      <!-- <v-img
-        class="mb-4"
-        height="150"
-        src="@/assets/logo.png"
-      /> -->
-    
-      <p>{{ props }}</p>
       <div class="text-center">
         <v-icon 
           class="mb-4"
@@ -56,7 +49,6 @@ import { ref, computed, onMounted, capitalize } from "vue";
 import { useRouter } from "vue-router"
 
 import useUserStore from "@/stores/userStore"
-import useAppStore from "@/stores/appStore";
 import useYoutubeStore from "@/stores/youtubeStore";
 import useSpotifyStore from "@/stores/spotifyStore";
 
@@ -84,7 +76,7 @@ const spotifyAccessToken = computed(() => userStore.getUserSpotifyUnAuthAccessTo
 const youtubeAPI = computed(() => userStore.getYoutubeAPIKey)
 
 onMounted(async () => {
-  if (props.serviceProviderName == 'spotify') {
+  if (props.serviceProviderName == 'spotify' ||'Spotify' ) {
     label.value = "Paste your Spotify playlist url here:)"
     regex.value = /^(https?:\/\/)?(open\.spotify\.com\/playlist\/|spotify:playlist:)([a-zA-Z0-9]{22})/;
     hintUrl.value = "https://open.spotify.com/playlist/xyz"
@@ -92,7 +84,7 @@ onMounted(async () => {
     // Generating AccessToken for Spotify API
     await useUserStore().generateSpotifyUnAuthAccessToken()
   }
-  else if (props.serviceProviderName == 'youtube') {
+  else if (props.serviceProviderName == 'youtube' || 'Youtube') {
     label.value = "Paste your Youtube playlist url here:)"
     regex.value = /^https?:\/\/(www\.)?youtube\.com\/playlist\?list=([A-Za-z0-9_-]+)/;
     hintUrl.value = "https://www.youtube.com/playlist/xyz"
@@ -121,7 +113,7 @@ const urlValidator = (value) => {
 }
 
 const submit = async () => {
-  if (props.serviceProviderName == 'spotify') {
+  if (props.serviceProviderName == 'spotify'||'Spotify' ) {
     console.log("Form Submitted! Implementation yet to be done" + spotifyAccessToken)
     submitted.value = true;
     res.value = await useSpotifyStore().fetchSpotifyPlaylistTracks(url.value, spotifyAccessToken.value)
@@ -132,8 +124,7 @@ const submit = async () => {
       router.push({ path: "/spotifyplaylist" })
     }
   }
-  else if(props.serviceProviderName == 'youtube') {
-
+  else if(props.serviceProviderName == 'youtube'|| 'Youtube') {
     console.log("Fetching Tracks from youtube public playlist..")
     submitted.value = true;
     res.value = await useYoutubeStore().fetchYoutubePlaylistTracks(url.value, youtubeAPI.value)
@@ -143,7 +134,6 @@ const submit = async () => {
       status.value = true
       router.push({ path: "/youtubeplaylist" })
     }
-
   }
 }
 

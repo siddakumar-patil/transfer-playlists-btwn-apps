@@ -46,7 +46,7 @@ async function parseFragment() {
     await useUserStore().getSpotifyUserId();
 
     // Send the code back to the opener window
-    window.opener.postMessage({ accessToken }, '*'); // Use '*' or specify the origin
+    window.opener.postMessage({ accessToken , app:'Spotify'}, '*'); // Use '*' or specify the origin
 
     router.push({ path: '/youtubeplaylistdest' })
     window.close(); // Close the popup

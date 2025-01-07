@@ -1,6 +1,7 @@
 {
   "name": "transfer-playlists-btwn-apps",
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "author": "Siddakumar Patil <patilsiddakumar123@gmail.com>",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

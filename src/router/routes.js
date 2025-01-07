@@ -1,5 +1,3 @@
-import { mergeProps } from "vue";
-
 export default [
   {
     path: "/",

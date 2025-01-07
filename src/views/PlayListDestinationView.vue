@@ -51,14 +51,10 @@
 
 <script setup>
 import { computed, ref } from "vue"
-import { useRouter } from "vue-router"
 
 import useAppStore from "@/stores/appStore"
 import useUserStore from "@/stores/userStore"
 import useYoutubeStore from "@/stores/youtubeStore"
-
-
-const router = useRouter();
 
 const props = defineProps({
     appsList: {
@@ -77,13 +73,7 @@ const props = defineProps({
 
 
 const appStore = useAppStore()
-// const userStore = useUserStore()
 const youtubeStore = useYoutubeStore()
-
-// Fetch Client ID and Secrets from .env file
-const clientId = import.meta.env.VITE_APP_YOUTUBE_CLIENT_ID
-const clientSecret = import.meta.env.VITE_APP_YOUTUBE_CLIENT_SECRET
-const apiKey = import.meta.env.VITE_APP_YOUTUBE_API_KEY
 
 const source = computed(()=> appStore.getSrc)
 
@@ -96,13 +86,13 @@ const applist = ref([
         // isSource: true, // Remove hardcoded value
         redirectRoute: "/spotifysrc"
     },
-    {
-        name: "Apple Music",
-        prependIcon: "mdi-apple",
-        appendIcon: "mdi-open-in-new",
-        // isSource: false,
-        redirectRoute: "/spotifysrc" // TODO: Change
-    },
+    // {
+    //     name: "Apple Music",
+    //     prependIcon: "mdi-apple",
+    //     appendIcon: "mdi-open-in-new",
+    //     // isSource: false,
+    //     redirectRoute: "/spotifysrc" // TODO: Change
+    // },
     {
         name: "Youtube",
         prependIcon: "mdi-youtube",

@@ -5,7 +5,7 @@
         max-width="900"
       >
         <div class="text-center">
-          <h1 class="text-h2 font-weight-bold px-4 py-4">Spotify Playlist- {{ playlist.name }}</h1>
+          <h1 class="text-h2 font-weight-bold px-4 py-4">Spotify Playlist {{ playlist?.name }}</h1>
         </div>
 
         <div class="py-4" />
@@ -18,11 +18,11 @@
             <v-card-item class="bg-green-darken-4">
 
             <v-card-title class="font-weight-bold">
-                {{ playlist.name  }}
+                {{ playlist?.name  }}
             </v-card-title>
 
             <v-card-sub-title class="font-weight-light text-h8" >
-             {{ playlist.tracks?.total }} Songs
+             {{ playlist?.total }} Songs
             </v-card-sub-title>
 
             <template v-slot:append>
@@ -30,13 +30,13 @@
             </template>
             </v-card-item>
 
-            <v-card-text v-if="playlist?.description" class="pt-4">{{ playlist.description }}</v-card-text>
+            <v-card-text v-if="playlist?.description" class="pt-4">{{ playlist?.description }}</v-card-text>
             <v-card-text v-else class="pt-4">No Description Available</v-card-text>
 
             <v-divider></v-divider>
 
             <v-virtual-scroll
-                :items="playlist.tracks.items"
+                :items="playlist?.items"
                 height="940"
                 item-height="50"
             >
@@ -57,7 +57,7 @@
                 <v-list-item-title class="font-weight-bold">{{ item.track?.name }}</v-list-item-title>
                 <v-list-item-sub-title class="font-weight-light">{{ item.track.album?.name }}</v-list-item-sub-title>
 
-                <template v-slot:append>
+                <!-- <template v-slot:append>
                     <v-btn
                     size="small"
                     variant="tonal"
@@ -71,7 +71,7 @@
                         mdi-open-in-new
                     </v-icon>
                     </v-btn>
-                </template>
+                </template> -->
                 </v-list-item>
             </template>
             </v-virtual-scroll>
@@ -86,11 +86,15 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { useRouter } from "vue-router"
 
 import useYoutubeStore from "@/stores/youtubeStore";
 import useSpotifyStore from "@/stores/spotifyStore";
+
+onMounted(() => {
+   console.log("Spotify Playlist View Mounted: ", playlist.value)
+})
 
 const router = useRouter()
 

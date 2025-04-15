@@ -68,12 +68,12 @@ const useSpotifyStore = defineStore("spotify", {
       const regex = /playlist\/([a-zA-Z0-9]{22})(.*)?$/
       const match = spotifyPlaylistUrl.match(regex)
       const playlistId = match ? match[1] : null
-      const additionalParams = match ? match[2] : null
+      const additionalParams = match &  match[2] ? match[2] : ''
 
       // const match = spotifyPlaylistUrl.match(regex)
       // const playlistId = match ? match[1] : null
 
-      console.log(" [ fetchSpotifyPlaylistTracks ]:  Fetching for playlistId: " + playlistId)
+      console.log(" [ fetchSpotifyPlaylistTracks ]:  Fetching for playlistId: " + playlistId + " and additionalParams:"+match)
 
       if (playlistId === null) return "Failed" // TODO: Return a proper return
 

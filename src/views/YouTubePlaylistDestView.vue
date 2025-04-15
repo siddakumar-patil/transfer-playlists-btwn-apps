@@ -37,7 +37,7 @@
           <v-divider></v-divider>
 
           <v-virtual-scroll
-              :items="playlist?.tracks?.items"
+              :items="playlist?.items"
               height="940"
               item-height="50"
           >
@@ -126,6 +126,10 @@ const youtubeAccessToken = computed(() => userStore.getYoutubeAccessToken)
 
 let isLoading = ref(false) // TODO: added loader or progress bar on click
 
+onMounted(() => {
+   console.log("Spotify Playlist View Mounted: ", playlist.value)
+})
+
 const trackImage = (images) => {
   if (images[0]) {
     return images[0]?.url
@@ -150,10 +154,10 @@ const onClick =async  () => {
   const playlisTitle = playlist.value.name + '-Music Playlist'
   const playlistDescription = playlist.value.description == '' ? 'Music Playlist by ' + playlist.value?.owner?.display_name : playlist.value.description
 
-  if (playlist.value?.tracks) {
+  if (playlist.value?.items) {
     
     const playlistId = await youtubeStore.createYoutubePrivatePlaylist(youtubeAccessToken.value, playlisTitle, playlistDescription)
-    const queries = await youtubeStore.createYoutubeQueriesList(playlist.value?.tracks?.items)
+    const queries = await youtubeStore.createYoutubeQueriesList(playlist.value?.items)
     const videoIds = await youtubeStore.fetchYoutubeMusicVideoIds(queries)
   
     await youtubeStore.addTracksToYoutubePlaylistUsingVideoIds(youtubeAccessToken, playlistId, videoIds)

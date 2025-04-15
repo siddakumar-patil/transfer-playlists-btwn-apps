@@ -32,9 +32,9 @@
           <v-alert v-if="res == 'Success'" type="sucess">
            Fetched 
           </v-alert>
-          <v-alert class="my-4 mx-7" type="error" >
+          <!-- <v-alert class="my-4 mx-7" type="error" >
             Something went wrong:(
-          </v-alert>
+          </v-alert> -->
       </v-form>
 
       </div>

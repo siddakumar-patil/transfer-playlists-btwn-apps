@@ -66,7 +66,7 @@ VITE_APP_YOUTUBE_API_KEY=your_youtube_api_key
 npm run dev
 ```
 
-Visit [http://localhost:5173](http://localhost:5173) in your browser.
+Visit [http://localhost:5000](http://localhost:5000) in your browser.
 
 ---
 

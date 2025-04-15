@@ -8,17 +8,6 @@ Music lovers often switch between streaming platforms, whether due to new subscr
 
 **This app automates the entire process.** In just a few clicks, users can transfer their playlists between Spotify and YouTube, saving time and ensuring accuracy.
 
----
-
-## ✨ Features
-
-- 🔁 Transfer entire playlists between Spotify and YouTube
-- 🔍 Automatically match songs across platforms
-- 🎧 Clean and responsive UI using Vuetify
-- 🔐 Secure OAuth authentication with Spotify and YouTube
-
----
-
 ## 🧱 Tech Stack
 
 - [Vue 3](https://vuejs.org/)
